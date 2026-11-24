@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}SYNOP guardado · Orán AERO{% endblock %}
+{% block content %}<div class="section-heading-v07"><div class="heading-icon">▤</div><div><p class="eyebrow">INFORME GUARDADO</p><h1>SYNOP del {{observation.observation_time_utc.strftime('%d/%m/%Y %H:%M')}} UTC</h1></div></div>
+<section class="panel"><div class="panel-heading"><h2>Mensaje SYNOP · Versión {{report.version_number}}</h2><span class="pill active-pill">Guardado</span></div>
+<pre class="synop-message">{{report.message}}</pre>
+{% if warnings %}<p class="muted small">Observaciones:</p>{% for item in warnings %}<p class="muted small">· {{item}}</p>{% endfor %}{% endif %}
+<form action="/reportes/{{report.id}}/corregir" method="post" onsubmit="return confirm('¿Crear una nueva versión a partir de este informe? El original se conservará.')"><button class="primary">Corregir datos · Nueva versión</button></form>
+<div class="panel-heading" style="margin-top:24px"><h2>Versiones conservadas</h2></div><div class="row-actions">{% for r in versions %}<a class="button-link secondary" href="/reportes/{{r.id}}">Versión {{r.version_number}}</a>{% endfor %}</div>
+</section><div class="row-actions"><a class="button-link primary" href="/synop">Iniciar siguiente SYNOP</a><a class="button-link secondary" href="/historial">Volver al historial</a></div>
+{% endblock %}

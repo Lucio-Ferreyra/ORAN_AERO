@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block title %}Valores Extremos · Orán AERO{% endblock %}
+{% block content %}
+<div class="section-heading-v07"><div class="heading-icon">♨</div><div><p class="eyebrow">RESUMEN METEOROLÓGICO DIARIO</p><h1>Valores Extremos</h1></div></div>
+<!-- Resumen diario calculado en UTC, independiente de la Sección 5. -->
+<section class="panel"><form method="get" class="table-selector" action="/extremos"><label>Fecha de observación UTC<input type="date" name="day" value="{{day.isoformat()}}"></label><button class="primary">Consultar</button></form>
+<p class="muted small">Período UTC: {{day.isoformat()}} 00:00 hasta el día siguiente 00:00 (sin incluir el límite final). Se usan informes confirmados y sus correcciones más recientes.</p></section>
+{% set names=[('temperature_max','Máxima instrumental','°C'),('temperature_min','Mínima instrumental','°C'),('wet_max','Bulbo húmedo máximo','°C'),('wet_min','Bulbo húmedo mínimo','°C'),('vapor_max','Tensión de vapor máxima','hPa'),('vapor_min','Tensión de vapor mínima','hPa'),('dew_max','Punto de rocío máximo','°C'),('dew_min','Punto de rocío mínimo','°C'),('hr_max','Humedad relativa máxima','%'),('hr_min','Humedad relativa mínima','%')] %}
+<div class="extreme-grid">{% for key,label,unit in names %}{% set item=extremes[key] %}<div class="extreme-card"><p>{{label}}</p><strong>{{item.value if item else 'Sin datos'}}{% if item %} {{unit}}{% endif %}</strong>{% if item %}<small>Hora UTC {{item.time_utc[11:16]}} · <a href="/reportes/{{item.report_id}}">Informe #{{item.report_id}}</a></small>{% endif %}</div>{% endfor %}
+<div class="extreme-card wind-feature"><p>Viento más fuerte</p>{% set wind=extremes.wind_max %}{% if wind %}<strong>{{wind.knots}} nudos</strong><small>Beaufort {{wind.beaufort}} · Dirección {{wind.direction_degrees if wind.direction_degrees is not none else '—'}}° (dd {{wind.direction_dd}})</small><small>Primera ocurrencia: {{wind.time_utc[11:16]}} UTC · <a href="/reportes/{{wind.report_id}}">Informe #{{wind.report_id}}</a></small>{% else %}<strong>Sin datos</strong>{% endif %}</div>
+</div><p class="muted small">Informes disponibles para el período: {{extremes.report_count}}</p>
+{% endblock %}

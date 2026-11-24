@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block title %}Historial · Orán AERO{% endblock %}
+{% block content %}<div class="section-heading-v07"><div class="heading-icon">◷</div><div><p class="eyebrow">REGISTRO HISTÓRICO</p><h1>Historial de Informes SYNOP</h1></div></div>
+<section class="panel"><p class="muted small">Cada corrección crea una nueva versión. Los mensajes anteriores se conservan y pueden consultarse.</p>
+{% if reports %}<div class="table-wrap"><table><thead><tr><th>Informe</th><th>Observación UTC</th><th>Versión</th><th>Usuario</th><th>Mensaje</th><th></th></tr></thead><tbody>
+{% for r in reports %}<tr><td>#{{r.id}}</td><td>{{r.observation.observation_time_utc.strftime('%d/%m/%Y %H:%M')}}</td><td>{{r.version_number}}</td><td>{{r.created_by or '—'}}</td><td><code>{{r.message[:76]}}{% if r.message|length>76 %}…{% endif %}</code></td><td><a href="/reportes/{{r.id}}">Ver / corregir</a></td></tr>{% endfor %}</tbody></table></div>{% else %}<p>Todavía no hay informes confirmados.</p>{% endif %}
+</section>{% endblock %}

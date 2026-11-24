@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light"><title>{% block title %}Orán AERO{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css?v=0700">
+</head>
+<body>
+{% if user %}
+<header class="station-header">
+ <div class="station-head-main">
+  <button type="button" class="drawer-open" id="drawer-open" aria-label="Abrir menú" aria-expanded="false" aria-controls="main-drawer">☰</button>
+  <div class="station-mark" aria-hidden="true">☁</div>
+  <div class="station-title"><h1>{{ station.name if station else 'Orán AERO' }}</h1><p>Estación meteorológica · OMM {{ station.block_number }}{{ station.station_number }}</p></div>
+  <div class="clock-card"><strong id="utc-date">—</strong><small><span id="hoa-clock">—</span> HOA&nbsp;&nbsp; <span id="utc-clock">—</span> UTC</small></div>
+ </div>
+</header>
+<div class="drawer-shade" id="drawer-shade" hidden></div>
+<aside class="main-drawer" id="main-drawer" aria-label="Navegación" aria-hidden="true">
+  <div class="drawer-top"><button type="button" id="drawer-close" aria-label="Cerrar menú">×</button>
+   <strong>{{ user.full_name }}</strong><p>{{ 'Jefe de Estación' if is_chief else 'Observador' }} · <span id="drawer-time">—</span> HOA</p>
+  </div>
+  <nav class="menu-options">
+   <a href="/synop"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#cloud-sun"></use></svg></span>Realizar SYNOP</a>
+   <a href="/estacion"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#gauge"></use></svg></span>Datos de la Estación e Instrumentos</a>
+   <a href="/personal"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#users"></use></svg></span>Información del Personal</a>
+   <a href="/historial"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#clock"></use></svg></span>Historial de Informes</a>
+   <a href="/extremos"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#chart"></use></svg></span>Valores Extremos</a>
+   <a href="/tablas"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#file"></use></svg></span>Tablas de la Estación</a>
+   <a href="/personal#contrasena"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#key"></use></svg></span>Cambiar mi contraseña</a>
+   <form action="/logout" method="post"><button type="submit"><span class="menu-icon"><svg class="v07-icon" aria-hidden="true"><use href="/static/icons_v07.svg#out"></use></svg></span>Salir</button></form>
+  </nav>
+</aside>
+{% else %}<header class="login-header"><a class="brand" href="/login">☁ Orán AERO <span>Sistema meteorológico</span></a></header>{% endif %}
+<main class="container {% block main_class %}{% endblock %}">{% block content %}{% endblock %}</main>
+<footer>Orán AERO · Fecha y hora de observación SYNOP en UTC</footer>
+<script>
+(function(){
+ const open=document.getElementById('drawer-open'),close=document.getElementById('drawer-close'),shade=document.getElementById('drawer-shade'),pane=document.getElementById('main-drawer');
+ if(open){const toggle=visible=>{pane.classList.toggle('is-open',visible);shade.hidden=!visible;pane.setAttribute('aria-hidden',String(!visible));open.setAttribute('aria-expanded',String(visible));};open.addEventListener('click',()=>toggle(true));close.addEventListener('click',()=>toggle(false));shade.addEventListener('click',()=>toggle(false));document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false);});}
+ const date=document.getElementById('utc-date');if(!date)return;
+ const formatter=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Salta',day:'numeric',month:'long',year:'numeric'});
+ function tick(){const now=new Date(),two=n=>String(n).padStart(2,'0');
+  const h=new Intl.DateTimeFormat('en-GB',{timeZone:'America/Argentina/Salta',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
+  const utc=two(now.getUTCHours())+':'+two(now.getUTCMinutes())+':'+two(now.getUTCSeconds());
+  date.textContent=formatter.format(now);document.getElementById('hoa-clock').textContent=h;document.getElementById('utc-clock').textContent=utc;document.getElementById('drawer-time').textContent=h;
+ }tick();setInterval(tick,1000);
+})();
+</script>
+{% block scripts %}{% endblock %}
+</body></html>

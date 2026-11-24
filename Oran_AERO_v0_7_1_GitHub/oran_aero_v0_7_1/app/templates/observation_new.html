@@ -1,0 +1,34 @@
+{% extends 'base.html' %}{% block title %}Carga SYNOP · Orán AERO{% endblock %}{% block main_class %}workspace{% endblock %}{% block content %}
+<div class="work-title"><div><p class="eyebrow">CARGA GUIADA DE OBSERVACIÓN</p><h2>Realizar informe SYNOP</h2><p class="muted">Bloque 1 · Datos de observación. Revisá y confirmá antes de continuar.</p></div><span class="step-badge">Paso 1 de la carga</span></div>
+{% if error %}<div class="alert danger" role="alert">{{ error }}</div>{% endif %}
+<div class="workspace-grid">
+  <section class="entry-column">
+    <section class="synop-preview panel">
+      <div class="preview-heading"><div><p class="eyebrow">IDENTIFICACIÓN DEL INFORME</p><h2>Mensaje SYNOP</h2></div></div>
+      <pre class="synop-message">{{ section0 }} </pre>
+      <p class="small muted">La identificación se genera automáticamente con la fecha, hora y datos de la estación.</p>
+    </section>
+    <form method="post" action="/observaciones/nueva" class="panel form-panel guided-form" id="synop-form">
+      <div class="section-heading"><div><span class="section-number">01</span><div><h2>Datos meteorológicos</h2><p class="muted small">Fecha de referencia generada automáticamente: {{ now_utc }}</p></div></div></div>
+      <div class="form-grid">
+        <label>Temperatura seca TS (°C)<input name="ts" inputmode="decimal" placeholder="Ej.: 21.8"><small>Lectura del termómetro seco.</small></label>
+        <label>Temperatura húmeda TH (°C)<input name="th" inputmode="decimal" placeholder="Ej.: 18.9"><small>Se utiliza en los cálculos psicrométricos definidos.</small></label>
+        <label>Presión a nivel de estación (hPa)<input name="pressure_hpa" inputmode="decimal" placeholder="Ej.: 948.3"></label>
+        <label>Escala gruesa de visibilidad (VV)<input name="visibility_code" inputmode="numeric" placeholder="Código ingresado por el observador"><small>Este es el valor que se utilizará en VV del grupo irixhVV.</small></label>
+        <label>Nubosidad total N<input name="cloud_amount" inputmode="numeric" placeholder="0–9 o /"><small>Clave SYNOP 2700.</small></label>
+        <label>Dirección del viento<input name="wind_direction" inputmode="numeric" placeholder="Dirección observada"><small>Se codificará conforme a la clave correspondiente en el módulo de viento.</small></label>
+        <label>Unidad de viento<select name="wind_unit"><option value="3" selected>3 · Beaufort</option><option value="1">1 · km/h</option><option value="2">2 · m/s</option><option value="4">4 · nudos</option></select><small>Para la configuración actual se utiliza Beaufort.</small></label>
+        <label>Fuerza del viento (Beaufort)<input name="wind_force" type="number" min="0" max="12" step="1" placeholder="0–12"><small>Fuera de 0–12 se rechaza el bloque.</small></label>
+        <label>Estado del suelo (libreta)<select name="soil_state"><option value="">Seleccionar código</option>{% for n in range(10) %}<option value="{{ n }}">{{ n }}</option>{% endfor %}</select><small>Se muestra para transcripción manual; no se incluye en SYNOP.</small></label>
+      </div>
+      <label>Observaciones / datos faltantes<textarea name="notes" rows="2" placeholder="Aclaraciones necesarias para este bloque"></textarea></label>
+      <div class="confirm-strip"><input type="checkbox" name="confirmed" value="yes" id="confirmed" required><label for="confirmed">Revisé los datos de este bloque y confirmo que son correctos.</label></div>
+      <div class="actions"><button class="primary" type="submit">Confirmar bloque y revisar borrador →</button></div>
+    </form>
+  </section>
+  <aside class="table-sidebar">
+    <section class="panel table-reference"><p class="eyebrow">REFERENCIA CONTEXTUAL</p><h2>Tablas de consulta</h2><div class="reference-card active"><strong>Clave SYNOP 4377</strong><p>Visibilidad: la escala gruesa se ingresa manualmente. La escala fina se determina automáticamente a partir del código grueso.</p></div><div class="reference-card"><strong>Clave SYNOP 2700</strong><p>Nubosidad total y selección de códigos relacionados.</p></div><div class="reference-card"><strong>Tabla Beaufort–nudos</strong><p>Fuerza permitida: 0 a 12. La equivalencia se consulta según la unidad de viento configurada.</p></div><div class="reference-card"><strong>Tablas Orán AERO</strong><p>Los cálculos se mostrarán al observador con sus valores intermedios. <a href="/tablas">Consultar todas las tablas →</a></p></div></section>
+    <section class="panel instrument-card"><p class="eyebrow">CONFIGURACIÓN ACTIVA</p><h2>Instrumento de viento</h2><div class="instrument-icon">≋</div><strong>{{ instrument.name }}</strong><p class="muted small">Instrumento en servicio</p><div class="instrument-code"><span>Código iw</span><strong>3</strong></div><p class="small muted">Viento estimado en nudos, según la configuración actual de la estación. El observador no ingresa este parámetro.</p></section>
+  </aside>
+</div>
+{% endblock %}

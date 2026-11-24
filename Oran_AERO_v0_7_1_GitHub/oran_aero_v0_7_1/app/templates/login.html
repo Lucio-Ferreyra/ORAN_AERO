@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block title %}Ingreso · Orán AERO{% endblock %}{% block content %}
+<section class="login-card">
+  <p class="eyebrow">ESTACIÓN METEOROLÓGICA</p><h1>Ingreso al sistema</h1><p class="muted">Orán AERO · Estación 87016</p>
+  {% if error %}<div class="alert danger">{{ error }}</div>{% endif %}
+  <form method="post" action="/login" class="stack">
+    <label>Usuario<input name="username" autocomplete="username" required autofocus></label>
+    <label>Contraseña<input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="primary" type="submit">Ingresar</button>
+  </form>
+  <p class="small muted">Primer inicio: ejecutar <code>python scripts/bootstrap_admin.py</code> desde la carpeta del proyecto.</p>
+</section>{% endblock %}

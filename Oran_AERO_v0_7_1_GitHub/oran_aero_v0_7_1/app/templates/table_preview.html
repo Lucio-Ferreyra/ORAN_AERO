@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block title %}Revisar tabla · Orán AERO{% endblock %}
+{% block content %}<div class="section-heading-v07"><div class="heading-icon">▤</div><div><p class="eyebrow">COMPARACIÓN ANTES DE ACTIVAR</p><h1>{{sheet}}</h1></div></div>
+<section class="panel"><h2>{{total_changes}} cambios de valores</h2><div class="table-wrap large-table"><table><thead><tr><th>Celda</th><th>Anterior</th><th>Propuesto</th></tr></thead><tbody>{% for item in changes %}<tr><td>{{item.cell}}</td><td>{{item.old}}</td><td>{{item.new}}</td></tr>{% endfor %}</tbody></table></div>
+{% if total_changes>changes|length %}<p class="muted">Se muestran los primeros {{changes|length}} cambios.</p>{% endif %}
+<div class="row-actions"><a href="/tablas?sheet={{sheet|urlencode}}" class="button-link secondary">Cancelar</a><form action="/tablas/activar" method="post"><input type="hidden" name="token" value="{{token}}"><button type="submit" class="primary">Confirmar y activar</button></form></div></section>{% endblock %}

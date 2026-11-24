@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block title %}Tablas de la Estación · Orán AERO{% endblock %}
+{% block content %}
+<div class="section-heading-v07"><div class="heading-icon">▤</div><div><p class="eyebrow">TABLAS METEOROLÓGICAS</p><h1>Tablas de la Estación</h1></div></div>
+<form method="get" action="/tablas" class="table-selector"><label>Seleccionar tabla<select name="sheet" onchange="this.form.submit()">{% for name in names %}<option value="{{name}}" {% if name==selected %}selected{% endif %}>{{name}}</option>{% endfor %}</select></label><span class="muted">{{row_count}} filas con contenido</span></form>
+{% if selected %}<section class="panel"><div class="panel-heading"><h2>{{selected}}</h2><button type="button" class="secondary outline" id="full-table" onclick="document.getElementById('table-content').classList.toggle('full-table')">Hoja completa</button></div>
+<div id="table-content" class="table-wrap large-table"><table><tbody>{% for row in rows %}<tr>{% for cell in row %}<td>{{cell}}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% if is_chief %}<div class="table-update"><h3>Actualizar esta tabla</h3><p class="muted small">Reemplazá los valores numéricos de una hoja completa. El sistema valida estructura, claves y encabezados antes de permitir activarla.</p>
+<a class="button-link secondary" href="/tablas/descargar/{{selected|urlencode}}">Descargar hoja Excel</a>
+<form method="post" action="/tablas/revisar" enctype="multipart/form-data" class="table-selector"><input type="hidden" name="sheet_name" value="{{selected}}"><label>Subir hoja modificada (.xlsx)<input type="file" name="file" accept=".xlsx" required></label><button class="primary">Revisar cambios</button></form></div>
+{% if table_history %}<div class="table-update"><h3>Restaurar una versión anterior de esta hoja</h3>
+{% for row in table_history %}{% set stamp=row.detail.nuevo.backup %}<form method="post" action="/tablas/restaurar" class="table-selector" onsubmit="return confirm('¿Restaurar esta versión de la hoja? Las otras hojas no cambiarán.')"><input type="hidden" name="sheet_name" value="{{selected}}"><input type="hidden" name="backup_id" value="{{stamp}}"><span class="muted small">Respaldo {{stamp}}</span><button class="secondary outline" type="submit">Restaurar esta hoja</button></form>{% endfor %}</div>{% endif %}
+{% endif %}
+</section>{% endif %}{% endblock %}
